@@ -64,31 +64,36 @@ if st.session_state.data_loaded:
     {report_data}
     """
 
-    # Tạo nút "Gửi yêu cầu phân tích"
-    if st.button('Gửi yêu cầu phân tích'):
-        # Hiển thị spinner "AI đang phân tích"
-        with st.spinner('AI đang phân tích...'):
-            try:
-                # Gửi yêu cầu phân tích tới Gemini AI
-                model = genai.GenerativeModel("gemini-1.5-flash")
-                response = model.generate_content(prompt)
+    # Tạo cột để hiển thị các nút bên cạnh nhau
+    col1, col2 = st.columns([1, 1])
 
-                # Hiển thị kết quả từ Gemini AI
-                st.subheader("Phân Tích Báo Cáo Kết Quả Kinh Doanh")
-                st.write(response.text.strip())
+    with col1:
+        # Tạo nút "Gửi yêu cầu phân tích"
+        if st.button('Gửi yêu cầu phân tích'):
+            # Hiển thị spinner "AI đang phân tích"
+            with st.spinner('AI đang phân tích...'):
+                try:
+                    # Gửi yêu cầu phân tích tới Gemini AI
+                    model = genai.GenerativeModel("gemini-1.5-flash")
+                    response = model.generate_content(prompt)
 
-                # Reset session state for analysis after response is received
-                st.session_state.data_loaded = False
-                st.session_state.income_df = None
-            except Exception as e:
-                st.error(f"Đã có lỗi xảy ra khi yêu cầu Gemini AI: {str(e)}")
+                    # Hiển thị kết quả từ Gemini AI
+                    st.subheader("Phân Tích Báo Cáo Kết Quả Kinh Doanh")
+                    st.write(response.text.strip())
 
-# Nếu không có dữ liệu, hiển thị nút tải lại
-if not st.session_state.data_loaded:
-    if st.button('🔄 Tải lại dữ liệu'):
-        st.session_state.income_df = get_financial_report()
-        st.session_state.data_loaded = st.session_state.income_df is not None
-        if st.session_state.data_loaded:
-            st.success("Dữ liệu đã được tải lại thành công!")
-        else:
-            st.error("Không thể tải dữ liệu, vui lòng thử lại.")
+                    # Reset session state for analysis after response is received
+                    st.session_state.data_loaded = False
+                    st.session_state.income_df = None
+                except Exception as e:
+                    st.error(f"Đã có lỗi xảy ra khi yêu cầu Gemini AI: {str(e)}")
+
+    with col2:
+        # Nếu không có dữ liệu, hiển thị nút tải lại
+        if not st.session_state.data_loaded:
+            if st.button('🔄 Tải lại dữ liệu'):
+                st.session_state.income_df = get_financial_report()
+                st.session_state.data_loaded = st.session_state.income_df is not None
+                if st.session_state.data_loaded:
+                    st.success("Dữ liệu đã được tải lại thành công!")
+                else:
+                    st.error("Không thể tải dữ liệu, vui lòng thử lại.")
