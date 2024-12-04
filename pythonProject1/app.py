@@ -15,7 +15,7 @@ st.title("Phân Tích Báo Cáo Kết Quả Kinh Doanh Ngân Hàng")
 
 # Kiểm tra xem API Key đã được thiết lập chưa
 if openai.api_key:
-    st.success("API Key đã được cấu hình thành công!")
+    st.success("Cấu hình thành công!")
 else:
     st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
 
