@@ -38,7 +38,7 @@ if isinstance(income_df, pd.DataFrame):
 
     # Gửi yêu cầu phân tích và nhận phản hồi
     if st.button('Gửi yêu cầu phân tích'):
-        with st.spinner('Đang phân tích...'):
+        with st.spinner('AI Đang phân tích...'):
             model = genai.GenerativeModel("gemini-1.5-flash")
             response = model.generate_content(prompt)
             st.write(response.text)
