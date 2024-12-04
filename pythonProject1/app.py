@@ -35,6 +35,7 @@ def get_financial_report(symbol='ACB'):
 if 'data_loaded' not in st.session_state:
     st.session_state.data_loaded = False
     st.session_state.income_df = None
+    st.session_state.analysis_in_progress = False  # Track if analysis is in progress
 
 # Hiển thị spinner chỉ khi dữ liệu chưa được tải
 if not st.session_state.data_loaded:
@@ -69,23 +70,25 @@ if st.session_state.data_loaded:
 
     with col1:
         # Tạo nút "Gửi yêu cầu phân tích"
-        if st.button('Gửi yêu cầu phân tích'):
-            # Hiển thị spinner "AI đang phân tích"
-            with st.spinner('AI đang phân tích...'):
-                try:
-                    # Gửi yêu cầu phân tích tới Gemini AI
-                    model = genai.GenerativeModel("gemini-1.5-flash")
-                    response = model.generate_content(prompt)
+        if not st.session_state.analysis_in_progress:  # Only show the button if analysis is not in progress
+            if st.button('Gửi yêu cầu phân tích'):
+                # Hiển thị spinner "AI đang phân tích"
+                st.session_state.analysis_in_progress = True  # Set the flag that analysis is in progress
+                with st.spinner('AI đang phân tích...'):
+                    try:
+                        # Gửi yêu cầu phân tích tới Gemini AI
+                        model = genai.GenerativeModel("gemini-1.5-flash")
+                        response = model.generate_content(prompt)
 
-                    # Hiển thị kết quả từ Gemini AI
-                    st.subheader("Phân Tích Báo Cáo Kết Quả Kinh Doanh")
-                    st.write(response.text.strip())
+                        # Hiển thị kết quả từ Gemini AI
+                        st.subheader("Phân Tích Báo Cáo Kết Quả Kinh Doanh")
+                        st.write(response.text.strip())
 
-                    # Reset session state for analysis after response is received
-                    st.session_state.data_loaded = False
-                    st.session_state.income_df = None
-                except Exception as e:
-                    st.error(f"Đã có lỗi xảy ra khi yêu cầu Gemini AI: {str(e)}")
+                        # Reset session state for analysis after response is received
+                        st.session_state.analysis_in_progress = False  # Reset analysis flag
+                    except Exception as e:
+                        st.error(f"Đã có lỗi xảy ra khi yêu cầu Gemini AI: {str(e)}")
+                        st.session_state.analysis_in_progress = False  # Reset analysis flag if error occurs
 
     with col2:
         # Nếu không có dữ liệu, hiển thị nút tải lại
