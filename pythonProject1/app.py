@@ -13,20 +13,16 @@ gemini.config(temp=0.7, top_p=0.9)
 if "income_df" not in st.session_state:
     st.session_state.income_df = None
 
-# Nút "Lấy Báo Cáo Kết Quả Kinh Doanh"
-if st.button("Lấy Báo Cáo Kết Quả Kinh Doanh"):
+# Mặc định luôn tải Báo Cáo Kết Quả Kinh Doanh khi ứng dụng chạy
+if st.session_state.income_df is None:
     try:
         stock = Vnstock().stock(symbol='ACB', source='VCI')
         st.session_state.income_df = stock.finance.income_statement(period='quarter', lang='vi')
-
-        # Hiển thị báo cáo tài chính
-        st.success("Lấy dữ liệu thành công!")
-        st.write("### Báo Cáo Kết Quả Kinh Doanh (Income Statement)")
-        st.dataframe(st.session_state.income_df)
+        st.success("Dữ liệu Báo Cáo Kết Quả Kinh Doanh đã được tải thành công!")
     except Exception as e:
-        st.error(f"Lỗi khi lấy dữ liệu: {e}")
+        st.error(f"Lỗi khi tải dữ liệu: {e}")
 
-# Hiển thị dữ liệu nếu đã lấy
+# Hiển thị báo cáo tài chính nếu đã tải thành công
 if st.session_state.income_df is not None:
     st.write("### Báo Cáo Kết Quả Kinh Doanh (Income Statement)")
     st.dataframe(st.session_state.income_df)
