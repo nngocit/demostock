@@ -4,18 +4,8 @@ import pandas as pd
 from vnstock3 import Vnstock
 import os
 
-# Đọc API Key từ tệp 'api_key.txt'
-try:
-    with open('api_key.txt', 'r') as file:
-        openai.api_key = file.read().strip()  # Đọc API Key từ tệp và loại bỏ khoảng trắng
-    # Kiểm tra xem API Key đã được cung cấp chưa
-    if not openai.api_key:
-        st.error("API Key không được cung cấp trong tệp 'api_key.txt'.")
-        exit()
-
-except FileNotFoundError:
-    st.error("Tệp api_key.txt không tồn tại! Hãy tạo tệp với API Key của bạn.")
-    exit()
+# Lấy API Key từ biến môi trường
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 # Cấu hình Streamlit
 st.set_page_config(page_title="Phân Tích Báo Cáo Kết Quả Kinh Doanh", layout="wide")
@@ -48,22 +38,10 @@ Dữ liệu chi tiết:
 {report_data}
 """
 
-# Nút gửi yêu cầu phân tích
-if st.button('Gửi yêu cầu phân tích'):
-    try:
-        # Gửi yêu cầu phân tích đến OpenAI API (Sử dụng GPT-4)
-        response = openai.Completion.create(
-            model="gpt-3.5-turbo",  # Sử dụng mô hình GPT-4
-            prompt=prompt,
-            max_tokens=500,  # Giới hạn số token trong phản hồi
-            temperature=0.7,  # Kiểm soát tính sáng tạo của câu trả lời
-            top_p=1.0  # Cách chọn từ (tùy chọn)
-        )
+# Hiển thị prompt (có thể xóa phần này nếu không cần hiển thị)
+st.subheader("Prompt Gửi Đến OpenAI")
+st.text(prompt)
 
-        # Hiển thị kết quả phân tích
-        st.success("Phân tích hoàn tất!")
-        st.write("### Kết Quả Phân Tích Từ OpenAI")
-        st.write(response['choices'][0]['text'].strip())
-
-    except Exception as e:
-        st.error(f"Đã xảy ra lỗi: {e}")
+# Thông báo nếu chưa thiết lập API Key
+if not openai.api_key:
+    st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
