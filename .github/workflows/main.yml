@@ -28,6 +28,4 @@ jobs:
 
     - name: Run Streamlit app
       run: |
-        streamlit run pythonProject1/app.py --server.port 8501 --server.address 0.0.0.0
-      env:  # Truyền OPENAI_API_KEY vào môi trường chạy ứng dụng
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        nohup streamlit run pythonProject1/app.py --server.port 8501 --server.address 0.0.0.0 &
