@@ -13,17 +13,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'  # Đảm bảo đúng phiên bản Python
-
-    - name: Install dependencies
+    - name: Set environment variables
       run: |
-        pip install streamlit==1.40.2 openai==0.28.1 pandas==2.2.3
-
-    - name: Run Streamlit app
-      env:  # Đặt biến môi trường
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: |
-        streamlit run pythonProject1/app.py --server.port 8501 --server.address 0.0.0.0
+        echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
