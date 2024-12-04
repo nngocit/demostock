@@ -11,7 +11,7 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 st.set_page_config(page_title="Phân Tích Báo Cáo Kết Quả Kinh Doanh", layout="wide")
 
 # Hiển thị tiêu đề ứng dụng
-st.title("Phân Tích Báo Cáo Kết Quả Kinh Doanh Ngân Hàng")
+st.title("Phân Tích Báo Cáo Kết Quả Kinh Doanh Ngân Hàng ACB")
 
 # Kiểm tra xem API Key đã được thiết lập chưa
 if openai.api_key:
