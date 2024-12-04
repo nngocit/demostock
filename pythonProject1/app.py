@@ -66,17 +66,22 @@ if st.session_state.data_loaded:
 
     # Tạo nút "Gửi yêu cầu phân tích"
     if st.button('Gửi yêu cầu phân tích'):
-        # Không hiển thị spinner khi gửi yêu cầu phân tích
-        try:
-            # Gửi yêu cầu phân tích tới Gemini AI
-            model = genai.GenerativeModel("gemini-1.5-flash")
-            response = model.generate_content(prompt)
+        # Hiển thị spinner "AI đang phân tích"
+        with st.spinner('AI đang phân tích...'):
+            try:
+                # Gửi yêu cầu phân tích tới Gemini AI
+                model = genai.GenerativeModel("gemini-1.5-flash")
+                response = model.generate_content(prompt)
 
-            # Hiển thị kết quả từ Gemini AI
-            st.subheader("Phân Tích Báo Cáo Kết Quả Kinh Doanh")
-            st.write(response.text.strip())
-        except Exception as e:
-            st.error(f"Đã có lỗi xảy ra khi yêu cầu Gemini AI: {str(e)}")
+                # Hiển thị kết quả từ Gemini AI
+                st.subheader("Phân Tích Báo Cáo Kết Quả Kinh Doanh")
+                st.write(response.text.strip())
+
+                # Reset session state for analysis after response is received
+                st.session_state.data_loaded = False
+                st.session_state.income_df = None
+            except Exception as e:
+                st.error(f"Đã có lỗi xảy ra khi yêu cầu Gemini AI: {str(e)}")
 
 # Nếu không có dữ liệu, hiển thị nút tải lại
 if not st.session_state.data_loaded:
