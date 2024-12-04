@@ -20,3 +20,5 @@ jobs:
     - name: Verify environment variable
       run: |
         echo "OPENAI_API_KEY is set to $OPENAI_API_KEY"  # In ra giá trị của OPENAI_API_KEY
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  # Truyền biến môi trường vào env cho bước này
