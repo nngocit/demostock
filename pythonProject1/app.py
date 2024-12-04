@@ -9,30 +9,37 @@ st.title("Phân Tích Báo Cáo Tài Chính Ngân Hàng ACB")
 gemini = GeminiAI(api_key='AIzaSyCFVp1vJ53OkxxC_FzALVuujuC8NzwOBsc')
 gemini.config(temp=0.7, top_p=0.9)
 
-# Biến lưu trữ dữ liệu báo cáo tài chính
-income_df = None
+# Sử dụng Session State để lưu trữ dữ liệu báo cáo tài chính
+if "income_df" not in st.session_state:
+    st.session_state.income_df = None
 
 # Nút "Lấy Báo Cáo Kết Quả Kinh Doanh"
 if st.button("Lấy Báo Cáo Kết Quả Kinh Doanh"):
     try:
         stock = Vnstock().stock(symbol='ACB', source='VCI')
-        income_df = stock.finance.income_statement(period='quarter', lang='vi')
+        st.session_state.income_df = stock.finance.income_statement(period='quarter', lang='vi')
 
         # Hiển thị báo cáo tài chính
+        st.success("Lấy dữ liệu thành công!")
         st.write("### Báo Cáo Kết Quả Kinh Doanh (Income Statement)")
-        st.dataframe(income_df)
+        st.dataframe(st.session_state.income_df)
     except Exception as e:
         st.error(f"Lỗi khi lấy dữ liệu: {e}")
 
+# Hiển thị dữ liệu nếu đã lấy
+if st.session_state.income_df is not None:
+    st.write("### Báo Cáo Kết Quả Kinh Doanh (Income Statement)")
+    st.dataframe(st.session_state.income_df)
+
 # Nút "Gửi Yêu Cầu Phân Tích"
-if income_df is not None and st.button("Gửi Yêu Cầu Phân Tích"):
+if st.session_state.income_df is not None and st.button("Gửi Yêu Cầu Phân Tích"):
     try:
         # Tạo prompt phân tích
         prompt = f"""
         Dưới đây là Báo cáo Kết quả Kinh doanh của Ngân hàng ACB. 
         Phân tích tình hình doanh thu, lợi nhuận gộp, chi phí và lợi nhuận ròng trong các quý gần đây. 
         Dữ liệu chi tiết: 
-        {income_df.to_string()}
+        {st.session_state.income_df.to_string()}
         """
 
         # Gửi yêu cầu phân tích đến Gemini AI
