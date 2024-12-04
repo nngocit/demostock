@@ -11,11 +11,11 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 st.set_page_config(page_title="Phân Tích Báo Cáo Kết Quả Kinh Doanh", layout="wide")
 
 # Hiển thị tiêu đề ứng dụng
-st.title("Phân Tích Báo Cáo Kết Quả Kinh Doanh Ngân Hàng ACB")
+st.title("Phân Tích Báo Cáo Kết Quả Kinh Doanh Ngân Hàng")
 
 # Kiểm tra xem API Key đã được thiết lập chưa
 if openai.api_key:
-    st.success("Cấu hình thành công!")
+    st.success("API Key đã được cấu hình thành công!")
 else:
     st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
 
@@ -33,9 +33,9 @@ def get_financial_report(symbol='ACB'):
 # Lấy Báo Cáo Kết Quả Kinh Doanh
 income_df = get_financial_report()
 
-# Nếu không lấy được dữ liệu, hiển thị thông báo và nút tải lại
+# Nếu không lấy được dữ liệu, hiển thị thông báo và nút tải lại với biểu tượng F5
 if income_df is None:
-    if st.button('Tải lại dữ liệu'):
+    if st.button('🔄 Tải lại dữ liệu'):  # Nút có biểu tượng F5
         income_df = get_financial_report()  # Thử lại lấy dữ liệu
 
 if income_df is not None:
@@ -55,7 +55,7 @@ if income_df is not None:
     """
 
     # Hiển thị nút gửi và xử lý yêu cầu gửi tới OpenAI khi nhấn nút
-    if st.button('Gửi yêu cầu AI phân tích'):
+    if st.button('Gửi yêu cầu phân tích'):
         if openai.api_key:
             try:
                 # Sử dụng mô hình gpt-3.5-turbo thay thế
