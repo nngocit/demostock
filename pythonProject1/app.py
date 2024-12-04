@@ -19,9 +19,9 @@ api_key_status = st.empty()  # Tạo chỗ trống cho thông báo
 
 if openai.api_key:
     # Hiển thị thông báo khi API Key thành công
-    api_key_status.success("Cấu hình thành công!")
+    api_key_status.success("API Key đã được cấu hình thành công!")
     time.sleep(3)  # Chờ 3 giây trước khi tắt thông báo
-    api_key_status.empty()  # Tắt thông báo
+    api_key_status.empty()  # Tắt thông báo sau 3 giây
 else:
     api_key_status.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
 
