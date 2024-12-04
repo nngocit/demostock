@@ -31,20 +31,24 @@ def get_financial_report(symbol='ACB'):
     except Exception as e:
         return str(e)
 
+# Hàm tải lại dữ liệu
+def reload_data():
+    return get_financial_report()
+
 # Biến để kiểm tra dữ liệu đã tải hay chưa
 data_loaded = False
 income_df = None
 
-# Kiểm tra và tải dữ liệu nếu chưa có
-if not data_loaded:
-    with st.spinner('Đang tải dữ liệu...'):
-        error_message = get_financial_report()
+# Hiển thị thông báo đang tải dữ liệu khi hàm đang thực hiện
+with st.spinner('Đang tải dữ liệu...'):
+    # Kiểm tra và tải dữ liệu
+    error_message = get_financial_report()
 
-        if isinstance(error_message, pd.DataFrame):  # Nếu dữ liệu trả về hợp lệ
-            income_df = error_message
-            data_loaded = True
-        else:  # Nếu có lỗi
-            st.error(f"Đã có lỗi khi lấy dữ liệu báo cáo tài chính: {error_message}")
+    if isinstance(error_message, pd.DataFrame):  # Nếu dữ liệu trả về hợp lệ
+        income_df = error_message
+        data_loaded = True
+    else:  # Nếu có lỗi
+        st.error(f"Đã có lỗi khi lấy dữ liệu báo cáo tài chính: {error_message}")
 
 # Nếu dữ liệu đã được tải thành công
 if data_loaded:
@@ -62,7 +66,7 @@ if data_loaded:
     {report_data}
     """
 
-    # Tạo nút "Gửi yêu cầu phân tích"
+    # Hiển thị nút gửi và xử lý yêu cầu gửi tới Gemini AI khi nhấn nút
     if st.button('Gửi yêu cầu phân tích'):
         # Không hiển thị spinner khi gửi yêu cầu phân tích
         try:
@@ -78,7 +82,7 @@ if data_loaded:
 else:
     # Nếu không có dữ liệu, hiển thị nút tải lại
     if st.button('🔄 Tải lại dữ liệu', disabled=data_loaded):
-        income_df = get_financial_report()
+        income_df = reload_data()
         data_loaded = income_df is not None
         if data_loaded:
             st.success("Dữ liệu đã được tải lại thành công!")
