@@ -25,5 +25,3 @@ jobs:
     - name: Run Streamlit app
       env:  # Đặt biến môi trường
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: |
-        streamlit run app.py
