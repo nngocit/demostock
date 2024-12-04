@@ -55,7 +55,7 @@ if income_df is not None:
     """
 
     # Hiển thị nút gửi và xử lý yêu cầu gửi tới OpenAI khi nhấn nút
-    if st.button('Gửi yêu cầu phân tích'):
+    if st.button('Gửi yêu cầu AI phân tích'):
         if openai.api_key:
             try:
                 # Sử dụng mô hình gpt-3.5-turbo thay thế
