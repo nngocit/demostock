@@ -31,33 +31,30 @@ def get_financial_report(symbol='ACB'):
     except Exception as e:
         return str(e)
 
-# Hàm tải lại dữ liệu
-def reload_data():
-    return get_financial_report()
-
 # Biến để kiểm tra dữ liệu đã tải hay chưa
-data_loaded = False
-income_df = None
+if 'data_loaded' not in st.session_state:
+    st.session_state.data_loaded = False
+    st.session_state.income_df = None
 
-# Chỉ hiển thị spinner khi tải dữ liệu ban đầu
-if not data_loaded:
+# Hiển thị spinner chỉ khi dữ liệu chưa được tải
+if not st.session_state.data_loaded:
     with st.spinner('Đang tải dữ liệu...'):
         # Kiểm tra và tải dữ liệu
         error_message = get_financial_report()
 
         if isinstance(error_message, pd.DataFrame):  # Nếu dữ liệu trả về hợp lệ
-            income_df = error_message
-            data_loaded = True
+            st.session_state.income_df = error_message
+            st.session_state.data_loaded = True
         else:  # Nếu có lỗi
             st.error(f"Đã có lỗi khi lấy dữ liệu báo cáo tài chính: {error_message}")
 
 # Nếu dữ liệu đã được tải thành công
-if data_loaded:
+if st.session_state.data_loaded:
     st.subheader("Báo Cáo Kết Quả Kinh Doanh")
-    st.dataframe(income_df)
+    st.dataframe(st.session_state.income_df)
 
     # Lấy dữ liệu từ DataFrame để phân tích
-    report_data = income_df.to_string()
+    report_data = st.session_state.income_df.to_string()
 
     # Tạo prompt phân tích
     prompt = f"""
@@ -80,12 +77,13 @@ if data_loaded:
             st.write(response.text.strip())
         except Exception as e:
             st.error(f"Đã có lỗi xảy ra khi yêu cầu Gemini AI: {str(e)}")
-else:
-    # Nếu không có dữ liệu, hiển thị nút tải lại
-    if st.button('🔄 Tải lại dữ liệu', disabled=data_loaded):
-        income_df = reload_data()
-        data_loaded = income_df is not None
-        if data_loaded:
+
+# Nếu không có dữ liệu, hiển thị nút tải lại
+if not st.session_state.data_loaded:
+    if st.button('🔄 Tải lại dữ liệu'):
+        st.session_state.income_df = get_financial_report()
+        st.session_state.data_loaded = st.session_state.income_df is not None
+        if st.session_state.data_loaded:
             st.success("Dữ liệu đã được tải lại thành công!")
         else:
             st.error("Không thể tải dữ liệu, vui lòng thử lại.")
