@@ -35,7 +35,7 @@ def get_financial_report(symbol='ACB'):
 if 'data_loaded' not in st.session_state:
     st.session_state.data_loaded = False
     st.session_state.income_df = None
-    st.session_state.analysis_in_progress = False  # Track if analysis is in progress
+    st.session_state.analysis_in_progress = False  # Initialize the flag for analysis in progress
 
 # Hiển thị spinner chỉ khi dữ liệu chưa được tải
 if not st.session_state.data_loaded:
