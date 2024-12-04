@@ -34,19 +34,18 @@ def get_financial_report(symbol='ACB'):
 def reload_data():
     return get_financial_report()
 
-# Hiển thị nút tải lại dữ liệu với biểu tượng F5
-reload_button = st.button('🔄 Tải lại dữ liệu')
+# Biến để kiểm tra dữ liệu đã tải hay chưa
+data_loaded = False
+income_df = None
 
 # Hiển thị thông báo đang tải dữ liệu khi hàm đang thực hiện
 with st.spinner('Đang tải dữ liệu...'):
-    # Nếu người dùng nhấn nút tải lại, gọi lại hàm lấy dữ liệu
-    if reload_button:
-        income_df = reload_data()
-    else:
-        income_df = get_financial_report()
+    # Kiểm tra và tải dữ liệu
+    income_df = get_financial_report()
+    data_loaded = income_df is not None
 
-# Kiểm tra nếu dữ liệu đã được tải thành công
-if income_df is not None:
+# Nếu dữ liệu đã được tải thành công
+if data_loaded:
     st.subheader("Báo Cáo Kết Quả Kinh Doanh")
     st.dataframe(income_df)
 
@@ -80,3 +79,12 @@ if income_df is not None:
                 st.error(f"Đã có lỗi xảy ra khi yêu cầu OpenAI: {str(e)}")
         else:
             st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
+else:
+    # Nếu không có dữ liệu, hiển thị nút tải lại
+    if st.button('🔄 Tải lại dữ liệu', disabled=data_loaded):
+        income_df = reload_data()
+        data_loaded = income_df is not None
+        if data_loaded:
+            st.success("Dữ liệu đã được tải lại thành công!")
+        else:
+            st.error("Không thể tải dữ liệu, vui lòng thử lại.")
