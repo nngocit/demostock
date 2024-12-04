@@ -31,18 +31,13 @@ def get_financial_report(symbol='ACB'):
     except Exception as e:
         return str(e)
 
-# Hàm tải lại dữ liệu
-def reload_data():
-    return get_financial_report()
-
 # Biến để kiểm tra dữ liệu đã tải hay chưa
 data_loaded = False
 income_df = None
 
-# Chỉ hiển thị spinner khi tải dữ liệu ban đầu
+# Kiểm tra và tải dữ liệu nếu chưa có
 if not data_loaded:
     with st.spinner('Đang tải dữ liệu...'):
-        # Kiểm tra và tải dữ liệu
         error_message = get_financial_report()
 
         if isinstance(error_message, pd.DataFrame):  # Nếu dữ liệu trả về hợp lệ
@@ -83,7 +78,7 @@ if data_loaded:
 else:
     # Nếu không có dữ liệu, hiển thị nút tải lại
     if st.button('🔄 Tải lại dữ liệu', disabled=data_loaded):
-        income_df = reload_data()
+        income_df = get_financial_report()
         data_loaded = income_df is not None
         if data_loaded:
             st.success("Dữ liệu đã được tải lại thành công!")
