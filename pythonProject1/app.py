@@ -14,16 +14,21 @@ st.set_page_config(page_title="Phân Tích Báo Cáo Kết Quả Kinh Doanh", la
 # Hiển thị tiêu đề ứng dụng
 st.title("Phân Tích Báo Cáo Kết Quả Kinh Doanh Ngân Hàng")
 
+# Biến kiểm tra lỗi
+error_occurred = False
+
 # Kiểm tra xem API Key đã được thiết lập chưa
 api_key_status = st.empty()  # Tạo chỗ trống cho thông báo
 
+# Kiểm tra API Key
 if openai.api_key:
-    # Hiển thị thông báo khi API Key thành công
     api_key_status.success("API Key đã được cấu hình thành công!")
-    time.sleep(3)  # Chờ 3 giây trước khi tắt thông báo
-    api_key_status.empty()  # Tắt thông báo sau 3 giây
+    # Tắt thông báo sau 3 giây
+    time.sleep(3)
+    api_key_status.empty()  # Tắt thông báo sau thời gian chờ
 else:
     api_key_status.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
+    error_occurred = True
 
 # Hàm lấy Báo Cáo Kết Quả Kinh Doanh
 def get_financial_report(symbol='ACB'):
@@ -83,8 +88,10 @@ if data_loaded:
                 st.write(response['choices'][0]['message']['content'].strip())
             except Exception as e:
                 st.error(f"Đã có lỗi xảy ra khi yêu cầu OpenAI: {str(e)}")
+                error_occurred = True
         else:
             st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
+            error_occurred = True
 else:
     # Nếu không có dữ liệu, hiển thị nút tải lại
     if st.button('🔄 Tải lại dữ liệu', disabled=data_loaded):
@@ -94,3 +101,8 @@ else:
             st.success("Dữ liệu đã được tải lại thành công!")
         else:
             st.error("Không thể tải dữ liệu, vui lòng thử lại.")
+            error_occurred = True
+
+# Nếu có lỗi xảy ra, hiển thị thông báo lỗi
+if error_occurred:
+    st.error("Đã có lỗi xảy ra trong quá trình lấy dữ liệu hoặc yêu cầu OpenAI.")
