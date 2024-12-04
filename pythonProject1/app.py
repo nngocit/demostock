@@ -2,9 +2,10 @@ import streamlit as st
 import openai
 import pandas as pd
 from vnstock3 import Vnstock
+import os
 
-# Khởi tạo API Key OpenAI
-openai.api_key = "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"  # Thay thế bằng API key thực của bạn
+# Khởi tạo API Key OpenAI (Lấy từ GitHub Secrets)
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 # Cấu hình Streamlit
 st.set_page_config(page_title="Phân Tích Báo Cáo Kết Quả Kinh Doanh", layout="wide")
@@ -42,7 +43,7 @@ if st.button('Gửi yêu cầu phân tích'):
     try:
         # Gửi yêu cầu phân tích đến OpenAI API (Sử dụng GPT-4)
         response = openai.Completion.create(
-            model="gpt-3.5-turbo",  # Sử dụng mô hình GPT-3.5 nếu không có quyền truy cập GPT-4
+            model="gpt-4",  # Sử dụng mô hình GPT-4
             prompt=prompt,
             max_tokens=500,  # Giới hạn số token trong phản hồi
             temperature=0.7,  # Kiểm soát tính sáng tạo của câu trả lời
