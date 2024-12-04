@@ -3,27 +3,27 @@ name: Deploy Streamlit App
 on:
   push:
     branches:
-      - main
+      - main  # Triển khai khi có push vào nhánh chính
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.9'  # Đảm bảo đúng phiên bản Python
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
+        pip install streamlit==1.40.2 openai==0.28.1 pandas==2.2.3 vnstock3==3.0.0
 
     - name: Run Streamlit app
-      env:
+      env:  # Đặt biến môi trường
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
         streamlit run app.py
