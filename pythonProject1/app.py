@@ -3,6 +3,7 @@ import openai
 import pandas as pd
 from vnstock3 import Vnstock
 import os
+import time
 
 # Lấy API Key từ biến môi trường
 openai.api_key = os.getenv('OPENAI_API_KEY')
@@ -14,10 +15,15 @@ st.set_page_config(page_title="Phân Tích Báo Cáo Kết Quả Kinh Doanh", la
 st.title("Phân Tích Báo Cáo Kết Quả Kinh Doanh Ngân Hàng")
 
 # Kiểm tra xem API Key đã được thiết lập chưa
+api_key_status = st.empty()  # Tạo chỗ trống cho thông báo
+
 if openai.api_key:
-    st.success("Cấu hình thành công!")
+    # Hiển thị thông báo khi API Key thành công
+    api_key_status.success("Cấu hình thành công!")
+    time.sleep(3)  # Chờ 3 giây trước khi tắt thông báo
+    api_key_status.empty()  # Tắt thông báo
 else:
-    st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
+    api_key_status.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
 
 # Hàm lấy Báo Cáo Kết Quả Kinh Doanh
 def get_financial_report(symbol='ACB'):
