@@ -17,20 +17,27 @@ st.title("Phân Tích Báo Cáo Kết Quả Kinh Doanh Ngân Hàng")
 if not openai.api_key:
     st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
 
+
 # Hàm lấy Báo Cáo Kết Quả Kinh Doanh
 def get_financial_report(symbol='ACB'):
     try:
         # Lấy báo cáo tài chính từ VNStock
         stock = Vnstock().stock(symbol=symbol, source='VCI')
         income_df = stock.finance.income_statement(period='quarter', lang='vi')
+
+        # Kiểm tra nếu không có dữ liệu trả về
+        if income_df.empty:
+            raise ValueError("Dữ liệu báo cáo tài chính trống.")
+
         return income_df
     except Exception as e:
-        st.error(f"Đã có lỗi khi lấy dữ liệu báo cáo tài chính: {str(e)}")
-        return None
+        return str(e)
+
 
 # Hàm tải lại dữ liệu
 def reload_data():
     return get_financial_report()
+
 
 # Biến để kiểm tra dữ liệu đã tải hay chưa
 data_loaded = False
@@ -39,8 +46,13 @@ income_df = None
 # Hiển thị thông báo đang tải dữ liệu khi hàm đang thực hiện
 with st.spinner('Đang tải dữ liệu...'):
     # Kiểm tra và tải dữ liệu
-    income_df = get_financial_report()
-    data_loaded = income_df is not None
+    error_message = get_financial_report()
+
+    if isinstance(error_message, pd.DataFrame):  # Nếu dữ liệu trả về hợp lệ
+        income_df = error_message
+        data_loaded = True
+    else:  # Nếu có lỗi
+        st.error(f"Đã có lỗi khi lấy dữ liệu báo cáo tài chính: {error_message}")
 
 # Nếu dữ liệu đã được tải thành công
 if data_loaded:
@@ -86,7 +98,3 @@ else:
             st.success("Dữ liệu đã được tải lại thành công!")
         else:
             st.error("Không thể tải dữ liệu, vui lòng thử lại.")
-
-# Nếu có lỗi xảy ra trong quá trình lấy dữ liệu hoặc yêu cầu OpenAI, hiển thị thông báo lỗi
-if not data_loaded:
-    st.error("Đã có lỗi xảy ra trong quá trình lấy dữ liệu báo cáo tài chính.")
