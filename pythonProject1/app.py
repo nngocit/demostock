@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from vnstock3 import Vnstock
 import os
-
+import pandas as pd
 # Lấy API Key từ biến môi trường
 genai.configure(api_key=os.getenv('OPENAI_API_KEY'))
 
