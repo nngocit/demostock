@@ -106,8 +106,15 @@ import pandas as pd
 from vnstock3 import Vnstock
 import os
 
+# Lấy API key từ biến môi trường
+api_key = os.getenv('OPENAI_API_KEY')
+
+# Kiểm tra xem API key đã được cấu hình hay chưa
+if not api_key:
+    raise EnvironmentError("API key chưa được cấu hình. Vui lòng thiết lập biến môi trường 'OPENAI_API_KEY'.")
+
 # Cấu hình API key cho Gemini AI
-genai.configure(api_key="AIzaSyCFVp1vJ53OkxxC_FzALVuujuC8NzwOBsc")
+genai.configure(api_key=api_key)
 
 # Cấu hình Streamlit
 st.set_page_config(page_title="Phân Tích Báo Cáo Kết Quả Kinh Doanh", layout="wide")
