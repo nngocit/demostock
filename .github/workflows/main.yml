@@ -16,3 +16,7 @@ jobs:
     - name: Set environment variables
       run: |
         echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV  # Đặt OPENAI_API_KEY trong môi trường
+
+    - name: Verify environment variable
+      run: |
+        echo "OPENAI_API_KEY is set to $OPENAI_API_KEY"  # In ra giá trị của OPENAI_API_KEY
