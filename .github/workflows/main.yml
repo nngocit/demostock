@@ -1,4 +1,4 @@
-name: Example Workflow
+name: Get OpenAI API Key
 
 on:
   push:
@@ -9,24 +9,10 @@ on:
       - main  # Chạy workflow khi có pull request vào nhánh main
 
 jobs:
-  example_job:
-    runs-on: ubuntu-latest  # Sử dụng môi trường Ubuntu
+  get-api-key:
+    runs-on: ubuntu-latest  # Chạy trên môi trường Ubuntu
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3  # Checkout code của bạn
-
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.9'  # Đặt phiên bản Python bạn muốn dùng
-
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt  # Cài đặt các thư viện cần thiết
-
-    - name: Run your script with OpenAI API key
-      env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  # Lấy API key từ Secrets
-      run: |
-        python your_script.py  # Chạy script Python của bạn
+      - name: Get OpenAI API Key from GitHub Secrets
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  # Lấy API key từ Secrets
