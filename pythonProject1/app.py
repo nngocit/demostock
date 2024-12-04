@@ -1,42 +1,47 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+from gemini_ai.gemini import GeminiAI
+from vnstock3 import Vnstock
 
 # Tiêu đề ứng dụng
-st.title("Demo Thuyet Trinh")
+st.title("Phân Tích Báo Cáo Tài Chính Ngân Hàng ACB")
 
-# Phần tương tác với người dùng
-st.sidebar.header("Tùy chọn")
-num_data = st.sidebar.slider("Chọn số lượng dữ liệu", 10, 100, 50)
-show_chart = st.sidebar.checkbox("Hiển thị biểu đồ", value=True)
+# Khởi tạo đối tượng GeminiAI với API key mặc định
+gemini = GeminiAI(api_key='AIzaSyCFVp1vJ53OkxxC_FzALVuujuC8NzwOBsc')
+gemini.config(temp=0.7, top_p=0.9)
 
-# Tạo dữ liệu ngẫu nhiên
-data = {
-    "X": np.linspace(1, num_data, num_data),
-    "Y": np.random.randint(1, 100, num_data)
-}
-df = pd.DataFrame(data)
+# Biến lưu trữ dữ liệu báo cáo tài chính
+income_df = None
 
-# Hiển thị dữ liệu dạng bảng
-st.write("### Dữ liệu ngẫu nhiên")
-st.write(df)
+# Nút "Lấy Báo Cáo Kết Quả Kinh Doanh"
+if st.button("Lấy Báo Cáo Kết Quả Kinh Doanh"):
+    try:
+        stock = Vnstock().stock(symbol='ACB', source='VCI')
+        income_df = stock.finance.income_statement(period='quarter', lang='vi')
 
-# Hiển thị biểu đồ nếu được chọn
-if show_chart:
-    st.write("### Biểu đồ Dữ Liệu")
-    fig, ax = plt.subplots()
-    ax.plot(df["X"], df["Y"], marker="o", linestyle="-", color="blue")
-    ax.set_title("Biểu đồ đường của dữ liệu")
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    st.pyplot(fig)
+        # Hiển thị báo cáo tài chính
+        st.write("### Báo Cáo Kết Quả Kinh Doanh (Income Statement)")
+        st.dataframe(income_df)
+    except Exception as e:
+        st.error(f"Lỗi khi lấy dữ liệu: {e}")
 
-# Tải dữ liệu xuống
-csv = df.to_csv(index=False).encode("utf-8")
-st.download_button(
-    label="Tải xuống dữ liệu CSV",
-    data=csv,
-    file_name="data.csv",
-    mime="text/csv"
-)
+# Nút "Gửi Yêu Cầu Phân Tích"
+if income_df is not None and st.button("Gửi Yêu Cầu Phân Tích"):
+    try:
+        # Tạo prompt phân tích
+        prompt = f"""
+        Dưới đây là Báo cáo Kết quả Kinh doanh của Ngân hàng ACB. 
+        Phân tích tình hình doanh thu, lợi nhuận gộp, chi phí và lợi nhuận ròng trong các quý gần đây. 
+        Dữ liệu chi tiết: 
+        {income_df.to_string()}
+        """
+
+        # Gửi yêu cầu phân tích đến Gemini AI
+        with st.spinner("Đang phân tích dữ liệu..."):
+            response = gemini.generate(prompt)
+
+        # Hiển thị kết quả phân tích
+        st.success("Phân tích hoàn tất!")
+        st.write("### Kết Quả Phân Tích Từ Gemini AI")
+        st.write(response)
+    except Exception as e:
+        st.error(f"Lỗi khi phân tích dữ liệu: {e}")
