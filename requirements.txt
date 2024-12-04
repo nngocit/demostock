@@ -1,4 +1,0 @@
-streamlit~=1.40.2
-openai~=0.28.0
-pandas~=2.2.3
-vnstock3~=3.1.0
