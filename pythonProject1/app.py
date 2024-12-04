@@ -37,11 +37,6 @@ Phân tích tình hình doanh thu, lợi nhuận gộp, chi phí và lợi nhu�
 Dữ liệu chi tiết: 
 {report_data}
 """
-
-# Hiển thị prompt (có thể xóa phần này nếu không cần hiển thị)
-st.subheader("Prompt Gửi Đến OpenAI")
-st.text(prompt)
-
 # Thông báo nếu chưa thiết lập API Key
 if not openai.api_key:
     st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
