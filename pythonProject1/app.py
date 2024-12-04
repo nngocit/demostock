@@ -5,7 +5,7 @@ from vnstock3 import Vnstock
 import os
 
 # Khởi tạo API Key OpenAI (Lấy từ GitHub Secrets)
-openai.api_key = os.getenv('OPENAI_API_KEY')
+openai.api_key_path  = 'api_key.txt'
 
 # Cấu hình Streamlit
 st.set_page_config(page_title="Phân Tích Báo Cáo Kết Quả Kinh Doanh", layout="wide")
