@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Tiêu đề ứng dụng
-st.title("Ứng dụng Streamlit Đơn Giản")
+st.title("Demo Thuyet Trinh")
 
 # Phần tương tác với người dùng
 st.sidebar.header("Tùy chọn")
