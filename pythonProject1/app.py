@@ -48,15 +48,17 @@ Dữ liệu chi tiết:
 if st.button('Gửi yêu cầu phân tích'):
     if openai.api_key:
         try:
-            # Gửi yêu cầu đến OpenAI
-            response = openai.Completion.create(
-                engine="text-davinci-003",  # Hoặc model khác của OpenAI
-                prompt=prompt,
-                max_tokens=150
+            # Sử dụng mô hình gpt-3.5-turbo thay thế
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",  # Mô hình thay thế
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt}
+                ]
             )
             # Hiển thị kết quả từ OpenAI
             st.subheader("Phân Tích Báo Cáo Kết Quả Kinh Doanh")
-            st.write(response.choices[0].text.strip())
+            st.write(response['choices'][0]['message']['content'].strip())
         except Exception as e:
             st.error(f"Đã có lỗi xảy ra khi yêu cầu OpenAI: {str(e)}")
     else:
