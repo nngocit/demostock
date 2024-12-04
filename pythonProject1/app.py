@@ -37,13 +37,15 @@ def reload_data():
 # Hiển thị nút tải lại dữ liệu với biểu tượng F5
 reload_button = st.button('🔄 Tải lại dữ liệu')
 
-# Nếu người dùng nhấn nút tải lại, gọi lại hàm lấy dữ liệu
-if reload_button:
-    income_df = reload_data()
-else:
-    income_df = get_financial_report()
+# Hiển thị thông báo đang tải dữ liệu khi hàm đang thực hiện
+with st.spinner('Đang tải dữ liệu...'):
+    # Nếu người dùng nhấn nút tải lại, gọi lại hàm lấy dữ liệu
+    if reload_button:
+        income_df = reload_data()
+    else:
+        income_df = get_financial_report()
 
-# Hiển thị dữ liệu báo cáo kết quả kinh doanh nếu có
+# Kiểm tra nếu dữ liệu đã được tải thành công
 if income_df is not None:
     st.subheader("Báo Cáo Kết Quả Kinh Doanh")
     st.dataframe(income_df)
