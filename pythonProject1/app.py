@@ -1,50 +1,58 @@
 import streamlit as st
-from gemini_ai.gemini import GeminiAI
+import openai
+import pandas as pd
 from vnstock3 import Vnstock
 
-# Tiêu đề ứng dụng
-st.title("Phân Tích Báo Cáo Tài Chính Ngân Hàng ACB")
+# Khởi tạo API Key OpenAI
+openai.api_key = "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"  # Thay thế bằng API key thực của bạn
 
-# Khởi tạo đối tượng GeminiAI với API key mặc định
-gemini = GeminiAI(api_key='AIzaSyCFVp1vJ53OkxxC_FzALVuujuC8NzwOBsc')
-gemini.config(temp=0.7, top_p=0.9)
+# Cấu hình Streamlit
+st.set_page_config(page_title="Phân Tích Báo Cáo Kết Quả Kinh Doanh", layout="wide")
 
-# Sử dụng Session State để lưu trữ dữ liệu báo cáo tài chính
-if "income_df" not in st.session_state:
-    st.session_state.income_df = None
+# Khởi tạo tiêu đề ứng dụng
+st.title("Phân Tích Báo Cáo Kết Quả Kinh Doanh Ngân Hàng")
 
-# Mặc định luôn tải Báo Cáo Kết Quả Kinh Doanh khi ứng dụng chạy
-if st.session_state.income_df is None:
+# Hàm lấy Báo Cáo Kết Quả Kinh Doanh
+def get_financial_report(symbol='ACB'):
+    # Lấy báo cáo tài chính từ VNStock
+    stock = Vnstock().stock(symbol=symbol, source='VCI')
+    income_df = stock.finance.income_statement(period='quarter', lang='vi')
+    return income_df
+
+# Hiển thị Báo Cáo Kết Quả Kinh Doanh
+income_df = get_financial_report()
+
+# Hiển thị dữ liệu báo cáo kết quả kinh doanh
+st.subheader("Báo Cáo Kết Quả Kinh Doanh")
+st.dataframe(income_df)
+
+# Lấy dữ liệu từ DataFrame để phân tích
+report_data = income_df.to_string()
+
+# Tạo prompt phân tích
+prompt = f"""
+Dưới đây là Báo cáo Kết quả Kinh doanh của Ngân hàng ACB. 
+Phân tích tình hình doanh thu, lợi nhuận gộp, chi phí và lợi nhuận ròng trong các quý gần đây. 
+Dữ liệu chi tiết: 
+{report_data}
+"""
+
+# Nút gửi yêu cầu phân tích
+if st.button('Gửi yêu cầu phân tích'):
     try:
-        stock = Vnstock().stock(symbol='ACB', source='VCI')
-        st.session_state.income_df = stock.finance.income_statement(period='quarter', lang='vi')
-        st.success("Dữ liệu Báo Cáo Kết Quả Kinh Doanh đã được tải thành công!")
-    except Exception as e:
-        st.error(f"Lỗi khi tải dữ liệu: {e}")
-
-# Hiển thị báo cáo tài chính nếu đã tải thành công
-if st.session_state.income_df is not None:
-    st.write("### Báo Cáo Kết Quả Kinh Doanh (Income Statement)")
-    st.dataframe(st.session_state.income_df)
-
-# Nút "Gửi Yêu Cầu Phân Tích"
-if st.session_state.income_df is not None and st.button("Gửi Yêu Cầu Phân Tích"):
-    try:
-        # Tạo prompt phân tích
-        prompt = f"""
-        Dưới đây là Báo cáo Kết quả Kinh doanh của Ngân hàng ACB. 
-        Phân tích tình hình doanh thu, lợi nhuận gộp, chi phí và lợi nhuận ròng trong các quý gần đây. 
-        Dữ liệu chi tiết: 
-        {st.session_state.income_df.to_string()}
-        """
-
-        # Gửi yêu cầu phân tích đến Gemini AI
-        with st.spinner("Đang phân tích dữ liệu..."):
-            response = gemini.generate(prompt)
+        # Gửi yêu cầu phân tích đến OpenAI API (Sử dụng GPT-4)
+        response = openai.Completion.create(
+            model="gpt-3.5-turbo",  # Sử dụng mô hình GPT-3.5 nếu không có quyền truy cập GPT-4
+            prompt=prompt,
+            max_tokens=500,  # Giới hạn số token trong phản hồi
+            temperature=0.7,  # Kiểm soát tính sáng tạo của câu trả lời
+            top_p=1.0  # Cách chọn từ (tùy chọn)
+        )
 
         # Hiển thị kết quả phân tích
         st.success("Phân tích hoàn tất!")
-        st.write("### Kết Quả Phân Tích Từ Gemini AI")
-        st.write(response)
+        st.write("### Kết Quả Phân Tích Từ OpenAI")
+        st.write(response['choices'][0]['text'].strip())
+
     except Exception as e:
-        st.error(f"Lỗi khi phân tích dữ liệu: {e}")
+        st.error(f"Đã xảy ra lỗi: {e}")
