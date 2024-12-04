@@ -1,8 +1,8 @@
 import streamlit as st
 import openai
-import pandas as pd
-from vnstock3 import Vnstock
 import os
+from vnstock3 import Vnstock
+import pandas as pd
 
 # Lấy API Key từ biến môi trường
 openai.api_key = os.getenv('OPENAI_API_KEY')
@@ -10,8 +10,14 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 # Cấu hình Streamlit
 st.set_page_config(page_title="Phân Tích Báo Cáo Kết Quả Kinh Doanh", layout="wide")
 
-# Khởi tạo tiêu đề ứng dụng
+# Hiển thị tiêu đề ứng dụng
 st.title("Phân Tích Báo Cáo Kết Quả Kinh Doanh Ngân Hàng")
+
+# Kiểm tra xem API Key đã được thiết lập chưa
+if openai.api_key:
+    st.success("API Key đã được cấu hình thành công!")
+else:
+    st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
 
 # Hàm lấy Báo Cáo Kết Quả Kinh Doanh
 def get_financial_report(symbol='ACB'):
@@ -37,6 +43,21 @@ Phân tích tình hình doanh thu, lợi nhuận gộp, chi phí và lợi nhu�
 Dữ liệu chi tiết: 
 {report_data}
 """
-# Thông báo nếu chưa thiết lập API Key
-if not openai.api_key:
-    st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
+
+# Hiển thị nút gửi và xử lý yêu cầu gửi tới OpenAI khi nhấn nút
+if st.button('Gửi yêu cầu phân tích'):
+    if openai.api_key:
+        try:
+            # Gửi yêu cầu đến OpenAI
+            response = openai.Completion.create(
+                engine="text-davinci-003",  # Hoặc model khác của OpenAI
+                prompt=prompt,
+                max_tokens=150
+            )
+            # Hiển thị kết quả từ OpenAI
+            st.subheader("Phân Tích Báo Cáo Kết Quả Kinh Doanh")
+            st.write(response.choices[0].text.strip())
+        except Exception as e:
+            st.error(f"Đã có lỗi xảy ra khi yêu cầu OpenAI: {str(e)}")
+    else:
+        st.error("API Key chưa được cấu hình. Vui lòng thiết lập API Key trong biến môi trường.")
