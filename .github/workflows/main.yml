@@ -1,24 +1,29 @@
-name: Get OpenAI API Key
+name: Deploy Streamlit App
 
 on:
   push:
     branches:
-      - main  # Chạy workflow khi có push lên nhánh main
-  pull_request:
-    branches:
-      - main  # Chạy workflow khi có pull request vào nhánh main
+      - main
 
 jobs:
-  get-api-key:
-    runs-on: ubuntu-latest  # Chạy trên môi trường Ubuntu
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3  # Checkout code của bạn
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Get OpenAI API Key from GitHub Secrets
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  # Lấy API key từ Secrets
-        run: |
-          echo "OpenAI API Key has been retrieved."
-          echo "The OpenAI API Key is: $OPENAI_API_KEY"
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Streamlit app
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: |
+        streamlit run app.py
