@@ -30,16 +30,21 @@ def get_financial_report(symbol='ACB'):
         st.error(f"Đã có lỗi khi lấy dữ liệu báo cáo tài chính: {str(e)}")
         return None
 
-# Lấy Báo Cáo Kết Quả Kinh Doanh
-income_df = get_financial_report()
+# Hàm tải lại dữ liệu
+def reload_data():
+    return get_financial_report()
 
-# Nếu không lấy được dữ liệu, hiển thị thông báo và nút tải lại với biểu tượng F5
-if income_df is None:
-    if st.button('🔄 Tải lại dữ liệu'):  # Nút có biểu tượng F5
-        income_df = get_financial_report()  # Thử lại lấy dữ liệu
+# Hiển thị nút tải lại dữ liệu với biểu tượng F5
+reload_button = st.button('🔄 Tải lại dữ liệu')
 
+# Nếu người dùng nhấn nút tải lại, gọi lại hàm lấy dữ liệu
+if reload_button:
+    income_df = reload_data()
+else:
+    income_df = get_financial_report()
+
+# Hiển thị dữ liệu báo cáo kết quả kinh doanh nếu có
 if income_df is not None:
-    # Hiển thị dữ liệu báo cáo kết quả kinh doanh
     st.subheader("Báo Cáo Kết Quả Kinh Doanh")
     st.dataframe(income_df)
 
