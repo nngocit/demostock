@@ -20,7 +20,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install streamlit==1.40.2 openai==0.28.1 pandas==2.2.3 vnstock3==3.0.0
+        pip install streamlit==1.40.2 openai==0.28.1 pandas==2.2.3
 
     - name: Run Streamlit app
       env:  # Đặt biến môi trường
