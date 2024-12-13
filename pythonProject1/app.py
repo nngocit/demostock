@@ -66,7 +66,7 @@ if data_loaded:
     # Tạo prompt phân tích
     prompt = f"""
     Dưới đây là Báo cáo Kết quả Kinh doanh của Ngân hàng ACB. 
-    Phân tích tình hình doanh thu, lợi nhuận gộp, chi phí và lợi nhuận ròng trong các quý gần đây. 
+    Phân tích tình hình doanh thu, lợi nhuận gộp, chi phí và lợi nhuận ròng trong các quý gần đây. Và cho ra thể hiện biểu đồ phân tích
     Dữ liệu chi tiết: 
     {report_data}
     """
