@@ -66,7 +66,7 @@ if data_loaded:
     # Tạo prompt phân tích
     prompt = f"""
     Dưới đây là Báo cáo Kết quả Kinh doanh của Ngân hàng ACB. 
-    Thể hiện biểu đồ phân tích cơ bản
+    Thể hiện biểu đồ phân tích doanh thu và lợi nhuận lãi lỗ cơ bản 
     Dữ liệu chi tiết: 
     {report_data}
     """
