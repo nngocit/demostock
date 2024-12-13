@@ -66,7 +66,7 @@ if data_loaded:
     # Tạo prompt phân tích
     prompt = f"""
     Dưới đây là Báo cáo Kết quả Kinh doanh của Ngân hàng ACB. 
-    Thể hiện biểu đồ phân tích doanh thu và lợi nhuận lãi lỗ cơ bản 
+    Thể hiện biểu đồ phân tích doanh thu và lợi nhuận lãi lỗ cơ bản từ 2 cột  doanh thu và lợi nhuận sau thuế.và kết quả tôi muốn có thể hiện 1 biểu đồ trực quan
     Dữ liệu chi tiết: 
     {report_data}
     """
